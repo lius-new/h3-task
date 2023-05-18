@@ -3,9 +3,15 @@
     <n-layout-header
       :inverted="inverted"
       bordered
-      style="display: flex; justify-content: end"
+      style="display: flex; justify-content: end; padding-right: 4vw"
     >
-      <n-menu mode="horizontal" :inverted="inverted" :options="menuOptions" />
+      <n-dropdown
+        trigger="hover"
+        :options="menuOptionList.userOptions"
+        @select="userMenuHandleClick"
+      >
+        <Avatar />
+      </n-dropdown>
     </n-layout-header>
     <n-layout has-sider>
       <n-layout-sider
@@ -22,70 +28,56 @@
           :collapsed-width="64"
           :collapsed-icon-size="22"
           :options="menuOptions"
+          :on-update:value="menuHandleClick"
         />
       </n-layout-sider>
-      <n-layout>this </n-layout>
+      <n-layout><slot></slot> </n-layout>
     </n-layout>
   </n-layout>
 </template>
 
 <script lang="ts" setup>
-import { h, reactive, ref, Component, VNode } from "vue";
-import { NIcon, NMenu, NLayout, NLayoutHeader, NLayoutSider } from "naive-ui";
+import { reactive, ref } from "vue";
+import Avatar from "@/components/avator/index.vue";
 import {
-  BookOutline as BookIcon,
-  PersonOutline as PersonIcon,
-} from "@vicons/ionicons5";
-
-function renderIcon(icon: Component): () => VNode<{ [key: string]: any }> {
-  return () => h(NIcon, null, { default: () => h(icon) });
-}
-
-const menuOptions = reactive([
-  {
-    label: "且听风吟",
-    key: "hear-the-wind-sing",
-    icon: renderIcon(BookIcon),
-  },
-  {
-    label: "1973年的弹珠玩具",
-    key: "pinball-1973",
-    icon: renderIcon(BookIcon),
-    // disabled: false,
-    children: [
-      {
-        label: "鼠",
-        key: "rat",
-      },
-    ],
-  },
-  {
-    label: "舞，舞，舞",
-    key: "dance-dance-dance",
-    icon: renderIcon(BookIcon),
-    children: [
-      {
-        type: "group",
-        label: "人物",
-        key: "people",
-        children: [
-          {
-            label: "叙事者",
-            key: "narrator",
-            icon: renderIcon(PersonIcon),
-          },
-          {
-            label: "羊男",
-            key: "sheep-man",
-            icon: renderIcon(PersonIcon),
-          },
-        ],
-      },
-    ],
-  },
-]);
+  NMenu,
+  NLayout,
+  NLayoutHeader,
+  NLayoutSider,
+  NDropdown,
+} from "naive-ui";
+import menuOptionList from "@/mock/menu";
+import { useRouter } from "vue-router";
 
 const inverted = ref(false);
+const menuOptions = reactive([...menuOptionList.menuOptions]);
+const router = useRouter();
+
+const userMenuHandleClick = (key: string) => {
+  if (key === "cancellation") {
+    localStorage.clear();
+    router.push("/login");
+  } else if (key === "user-account") {
+    router.push("/user-account");
+  }
+};
+
+const menuHandleClick = (key: string) => {
+  switch (key) {
+    case "user-manager":
+      router.push("/user-manager");
+      break;
+    case "car-manager":
+      router.push("/car-manager");
+      break;
+    case "car-publish":
+      router.push("/car-publish");
+      break;
+    case "user-account":
+      router.push("/user-account");
+      break;
+  }
+};
 </script>
 
 <style>

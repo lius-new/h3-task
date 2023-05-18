@@ -1,7 +1,13 @@
 import { VNode } from "vue";
 import { renderIcon } from "@/utils";
 
-import { BookOutline as BookIcon } from "@vicons/ionicons5";
+import {
+  AccessibilityOutline,
+  CarSportOutline,
+  ArrowUp,
+  HandRightOutline,
+  LogInOutline,
+} from "@vicons/ionicons5";
 
 interface MenuItemInterface {
   label: string;
@@ -10,20 +16,31 @@ interface MenuItemInterface {
   [key: string]: any;
 }
 
-const menuOptionsUser: MenuItemInterface[] = [
-  { label: "个人信息设置", key: "", icon: renderIcon(BookIcon) },
+const menuOptions: MenuItemInterface[] = [
+  {
+    label: "用户管理",
+    key: "user-manager",
+    icon: renderIcon(AccessibilityOutline),
+  },
+  { label: "车辆管理", key: "car-manager", icon: renderIcon(CarSportOutline) },
+  { label: "车辆发布", key: "car-publish", icon: renderIcon(ArrowUp) },
+  {
+    label: "个人信息设置",
+    key: "user-account",
+    icon: renderIcon(HandRightOutline),
+  },
 ];
-const menuOptionsVip: MenuItemInterface[] = [
-  { label: "个人信息设置", key: "", icon: renderIcon(BookIcon) },
-  { label: "车辆发布", key: "", icon: renderIcon(BookIcon) },
-];
-const menuOptionsAdmin: MenuItemInterface[] = [
-  { label: "用户管理", key: "", icon: renderIcon(BookIcon) },
-  { label: "车辆管理", key: "", icon: renderIcon(BookIcon) },
+const userOptions: MenuItemInterface[] = [
+  {
+    label: "用户信息",
+    key: "user-account",
+    icon: renderIcon(HandRightOutline),
+  },
+  {
+    label: "注销",
+    key: "cancellation",
+    icon: renderIcon(LogInOutline),
+  },
 ];
 
-export default {
-  menuOptionsUser,
-  menuOptionsVip,
-  menuOptionsAdmin,
-};
+export default { menuOptions, userOptions };

@@ -108,6 +108,7 @@ const onSubmitHandle = () => {
         data.data &&
           data.data.token &&
           localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userName", userInfo.userName);
         router.push("/");
       }
     });
@@ -124,6 +125,7 @@ const onSubmitHandle = () => {
         data.data &&
           data.data.token &&
           localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userName", userInfo.userName);
         router.push("/");
       }
     });

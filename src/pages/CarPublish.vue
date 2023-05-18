@@ -1,5 +1,5 @@
 <template>
-  <Layout>Home</Layout>
+  <Layout>Car publish</Layout>
 </template>
 
 <script setup lang="ts">

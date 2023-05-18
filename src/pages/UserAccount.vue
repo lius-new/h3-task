@@ -1,5 +1,5 @@
 <template>
-  <Layout>Home</Layout>
+  <Layout>UserAccount</Layout>
 </template>
 
 <script setup lang="ts">

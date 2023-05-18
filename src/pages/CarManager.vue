@@ -1,5 +1,5 @@
 <template>
-  <Layout>Home</Layout>
+  <Layout>Car Manager</Layout>
 </template>
 
 <script setup lang="ts">
