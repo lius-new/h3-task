@@ -1,4 +1,6 @@
 import { createPinia } from "pinia";
 
-const store = createPinia();
-export default store;
+export { uesDataTableStore } from "./table";
+export { useTableOperateModel } from "./table-model";
+
+export const store = createPinia();

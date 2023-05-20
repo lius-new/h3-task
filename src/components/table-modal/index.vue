@@ -2,8 +2,10 @@
   <n-modal
     v-model:show="store.modalStore.open"
     preset="dialog"
+    :icon="renderIcon(modelProps.icon)"
     :title="modelProps.title"
     :content="modelProps.content"
+    :type="(modelProps.type as any)"
     :positive-text="modelProps.positiveText"
     :negative-text="modelProps.negativeText"
     @mask-click="modelProps.modelButtonCancelClick"
@@ -18,6 +20,7 @@
           v-if="key as any !== 'userRole' && key as any !== 'userStatus' && key as any !== 'id'"
         >
           <n-input
+            :status="(modelProps.type as any)"
             placeholder=""
             type="text"
             :value="value"
@@ -26,6 +29,7 @@
         </template>
         <template v-else-if="(key as any) === 'userRole'">
           <n-select
+            :status="(modelProps.type as any)"
             :value="value"
             @update:value="(value) => store.changeModalData(key, value)"
             :options="optionUserRole"
@@ -33,6 +37,7 @@
         </template>
         <template v-else-if="(key as any) === 'userStatus'">
           <n-select
+            :status="(modelProps.type as any)"
             :value="value === 0 ? '启用' : '禁用'"
             @update:value="(value) => store.changeModalData(key, value)"
             :options="optionUserStatus"
@@ -50,11 +55,13 @@
             placeholder=""
             type="text"
             :value="value"
+            :status="(modelProps.type as any)"
             @input="(event:any) => store.changeModalData(key, event)"
           />
         </template>
         <template v-else-if="(key as any) === 'userRole'">
           <n-select
+            :status="(modelProps.type as any)"
             :value="value"
             @update:value="(value) => store.changeModalData(key, value)"
             :options="optionUserRole"
@@ -62,6 +69,7 @@
         </template>
         <template v-else-if="(key as any) === 'userStatus'">
           <n-select
+            :status="(modelProps.type as any)"
             :value="value == 0 ? '启用' : '禁用'"
             @update:value="(value) => store.changeModalData(key, value)"
             :options="optionUserStatus"
@@ -72,10 +80,16 @@
   </n-modal>
 </template>
 <script setup lang="ts">
-import { useTableOperateModel } from "@/stores/table-model";
+import { useTableOperateModel } from "@/stores/index";
 import { useMessage, NModal, NInput, NSelect } from "naive-ui";
 import { optionUserRole, optionUserStatus } from "@/mock/common";
 import { computed } from "vue";
+import {
+  CloudUploadOutline,
+  TrashBinOutline,
+  PersonAddOutline,
+} from "@vicons/ionicons5";
+import { renderIcon } from "@/utils";
 
 const store = useTableOperateModel();
 const message = useMessage();
@@ -91,8 +105,10 @@ const modelProps = computed(() => {
 });
 
 const deleteProps = {
+  icon: TrashBinOutline,
   title: "确认",
   content: "你确认是否删除吗?",
+  type: "error",
   positiveText: "确认",
   negativeText: "取消",
   modelButtonOKClick: () => {
@@ -103,8 +119,10 @@ const deleteProps = {
   },
 };
 const editProps = {
+  icon: CloudUploadOutline,
   title: "请编辑如下个人信息",
   content: "",
+  type: "warning",
   positiveText: "提交",
   negativeText: "取消",
   modelButtonOKClick: () => {
@@ -117,8 +135,10 @@ const editProps = {
   },
 };
 const addProps = {
+  icon: PersonAddOutline,
   title: "添加新用户",
   content: "",
+  type: "success",
   positiveText: "提交",
   negativeText: "取消",
   modelButtonOKClick: () => {

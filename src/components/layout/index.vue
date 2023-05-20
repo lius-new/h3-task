@@ -24,6 +24,7 @@
         :inverted="inverted"
       >
         <n-menu
+          :value="currentMenu"
           :inverted="inverted"
           :collapsed-width="64"
           :collapsed-icon-size="22"
@@ -47,11 +48,15 @@ import {
   NDropdown,
 } from "naive-ui";
 import menuOptionList from "@/mock/menu";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
 
 const inverted = ref(false);
 const menuOptions = reactive([...menuOptionList.menuOptions]);
 const router = useRouter();
+const route = useRoute();
+
+const currentMenu = computed(() => route.path.substring(1));
 
 const userMenuHandleClick = (key: string) => {
   if (key === "cancellation") {

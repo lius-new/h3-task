@@ -6,16 +6,15 @@
     :pagination="{ pageSize }"
     striped
   />
-  <TableModel v-if="store.modalStore.open" />
+  <TableModel v-if="storeTableModal.modalStore.open" />
 </template>
 <script setup lang="ts">
 import { NDataTable, NButton, NButtonGroup } from "naive-ui";
-import { ref, onBeforeMount, h } from "vue";
+import { ref, h } from "vue";
 import TableModel from "@/components/table-modal/index.vue";
-import { useTableOperateModel } from "@/stores/table-model";
+import { uesDataTableStore, useTableOperateModel } from "@/stores/index";
 
 interface PropsInterface {
-  filterValue: string;
   func: Function;
   [key: string]: any;
 }
@@ -24,9 +23,23 @@ const props = withDefaults(defineProps<PropsInterface>(), {});
 
 const columns = ref<any>([]); // 表中的字段名
 const data = ref<any>([]); // 表中数据
-const store = useTableOperateModel(); // store
+const storeTableModal = useTableOperateModel(); // 数据表格操作中的模态框的store
+const storeDataTable = uesDataTableStore(); // 数据表格的store
 
-onBeforeMount(async () => {
+// 数据
+storeDataTable.$subscribe((_, state) => {
+  if (state.filterValue.length !== 0) {
+    let filter = state.data.filter((item: any) => {
+      return (item.userName as string).includes(state.filterValue);
+    });
+    data.value = filter;
+  } else {
+    data.value = state.data;
+  }
+});
+
+// 加载数据
+const loadData = async () => {
   // 获取数据
   const resp = await props.func();
 
@@ -35,11 +48,13 @@ onBeforeMount(async () => {
     resp?.data?.code === 1102 &&
     resp.data.data.length !== 0
   ) {
-    data.value = resp.data.data;
+    storeDataTable.loadData(resp.data.data); // 将数据同步到store,保存备份
+    data.value = storeDataTable.data;
     columns.value = Object.keys(resp.data.data[0]).map((item) => ({
       title: item,
       key: item,
     }));
+    // 添加操作按钮
     columns.value.push({
       title: "action",
       key: "action",
@@ -58,7 +73,7 @@ onBeforeMount(async () => {
                 ghost: true,
                 type: "warning",
                 onClick: () => {
-                  store.openEditModal(row);
+                  storeTableModal.openEditModal(row);
                 },
               },
               { default: () => "编辑" }
@@ -70,7 +85,7 @@ onBeforeMount(async () => {
                 ghost: true,
                 type: "error",
                 onClick: () => {
-                  store.openDeleteModal(row);
+                  storeTableModal.openDeleteModal(row);
                 },
               },
               { default: () => "删除" }
@@ -80,5 +95,6 @@ onBeforeMount(async () => {
       },
     });
   }
-});
+};
+loadData();
 </script>
