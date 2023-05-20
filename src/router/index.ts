@@ -7,7 +7,7 @@ import {
   UserAccount,
   CarPublish,
 } from "@/pages/index";
-import { isLogin } from "@/utils";
+import { isLogin, toLoginIsLogin } from "@/utils";
 import { createRouter, createWebHistory, Router } from "vue-router";
 
 interface routesItemInterface {
@@ -68,14 +68,10 @@ const router: Router = createRouter({
 //  from, next
 router.beforeEach(async (to, _, next) => {
   if (to.meta.isNeedLogin) {
-    isLogin(false).then((res: any) => {
-      if (res.data.code !== 1005) window.location.href = "/login"; // 非登录状态，跳转到登录
-    });
+    isLogin();
     next();
   } else if (to.path === "/login") {
-    isLogin(true).then((res: any) => {
-      if (res.data.code === 1005) window.history.go(-1); // 如果已经登录，就返回到前面的链接
-    });
+    toLoginIsLogin();
     next();
   } else {
     next();

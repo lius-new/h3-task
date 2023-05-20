@@ -15,3 +15,11 @@ export const register = async (userInfo: any) =>
 export const authLogin = async () => {
   return await httpGet({ url: "/user/authLogin" });
 };
+
+export const getAllUser = async () => {
+  return await httpGet({ url: "/user" });
+};
+
+export const getUserByName = async (userName: string) => {
+  return await httpGet({ url: `/user/${userName}` });
+};

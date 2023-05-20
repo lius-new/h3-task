@@ -10,11 +10,18 @@ export const renderIcon: renderIconFunc = (icon: Component) => {
   return () => h(NIcon, null, { default: () => h(icon) });
 };
 
-// 通过login参数来判断是否是由登录页面调用的，如果是登录页面，获取不到token,就会一直刷新，避免一直刷新
-export const isLogin: (login: boolean) => any = async (login: boolean) => {
-  let token = localStorage.getItem("token");
-  if (!token && !login) window.location.href = "/login"; // 如果是login,那么就不需要
+export const isLogin: () => any = async () => {
+  // 验证登录， 如果返回结果code!==1005,表示没有登录
+  const res = await authLogin();
+  if (res.data.code !== 1005) {
+    localStorage.clear();
+    window.location.href = "/login";
+  }
+};
 
-  // 验证登录
-  return await authLogin();
+// 由登录界面过来的。
+export const toLoginIsLogin = async () => {
+  //  验证登录，如果已经登录，就返回到之前的页面，而不是进入到登录页面
+  const res = await authLogin();
+  if (res.data.code === 1005) window.history.go(-1);
 };
