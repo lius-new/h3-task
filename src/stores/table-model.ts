@@ -5,7 +5,7 @@ export const useTableOperateModel = defineStore("table-opreate-model", () => {
   const modalStore = reactive<{
     open: boolean;
     type: "edit" | "delete" | "add";
-    data: any;
+    data: any; // 这个是被选中要被操作的数据
   }>({
     open: false,
     type: "edit",

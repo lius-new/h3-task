@@ -23,3 +23,7 @@ export const getAllUser = async () => {
 export const getUserByName = async (userName: string) => {
   return await httpGet({ url: `/user/${userName}` });
 };
+
+export const getAllCar = async () => {
+  return await httpGet({ url: "/car" });
+};

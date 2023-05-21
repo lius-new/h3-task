@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { NButton, NInput } from "naive-ui";
 import Layout from "@/components/layout/index.vue";
-import Table from "@/components/table/index.vue";
+import Table from "@/components/table-user/index.vue";
 import { uesDataTableStore, useTableOperateModel } from "@/stores/index";
 import { getAllUser } from "@/serve/api";
 

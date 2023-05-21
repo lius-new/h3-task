@@ -6,13 +6,14 @@
     :pagination="{ pageSize }"
     striped
   />
-  <TableModel v-if="storeTableModal.modalStore.open" />
+  <TableModal v-if="storeTableModal.modalStore.open" />
 </template>
 <script setup lang="ts">
 import { NDataTable, NButton, NButtonGroup } from "naive-ui";
 import { ref, h } from "vue";
-import TableModel from "@/components/table-modal/index.vue";
+import TableModal from "@/components/table-user-modal/index.vue";
 import { uesDataTableStore, useTableOperateModel } from "@/stores/index";
+import { mapUserKey, encapsulatedDataCol, encapsulatedUserData } from "@/utils";
 
 interface PropsInterface {
   func: Function;
@@ -48,12 +49,10 @@ const loadData = async () => {
     resp?.data?.code === 1102 &&
     resp.data.data.length !== 0
   ) {
-    storeDataTable.loadData(resp.data.data); // 将数据同步到store,保存备份
-    data.value = storeDataTable.data;
-    columns.value = Object.keys(resp.data.data[0]).map((item) => ({
-      title: item,
-      key: item,
-    }));
+    storeDataTable.loadData(JSON.parse(JSON.stringify(resp.data.data))); // 将数据同步到store,保存备份
+    data.value = encapsulatedUserData(await resp.data.data);
+    columns.value = encapsulatedDataCol(mapUserKey, resp.data.data[0]);
+
     // 添加操作按钮
     columns.value.push({
       title: "action",
@@ -73,7 +72,13 @@ const loadData = async () => {
                 ghost: true,
                 type: "warning",
                 onClick: () => {
-                  storeTableModal.openEditModal(row);
+                  const current = storeDataTable.data.filter(
+                    (item: any) =>
+                      item.id === row.id && item.userName === row.userName
+                  )[0];
+                  storeTableModal.openEditModal(
+                    JSON.parse(JSON.stringify(current))
+                  );
                 },
               },
               { default: () => "编辑" }

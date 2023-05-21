@@ -46,6 +46,7 @@ import {
   NLayoutHeader,
   NLayoutSider,
   NDropdown,
+  useMessage,
 } from "naive-ui";
 import menuOptionList from "@/mock/menu";
 import { useRoute, useRouter } from "vue-router";
@@ -55,6 +56,8 @@ const inverted = ref(false);
 const menuOptions = reactive([...menuOptionList.menuOptions]);
 const router = useRouter();
 const route = useRoute();
+
+(window as any).$message = useMessage();
 
 const currentMenu = computed(() => route.path.substring(1));
 
