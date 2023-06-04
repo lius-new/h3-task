@@ -38,6 +38,16 @@ public class UserController {
         return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
     }
 
+    @PutMapping("/{userName}")
+    public Result<Object> updateUser(@PathVariable(value="userName") String  userName) {
+        int i =  userService.updateVip(userName);
+        if (i > 0){
+            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+        }
+        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
+    }
+
+
     @DeleteMapping("/{userName}")
     public Result<Object> deleteUser(@PathVariable(value = "userName", required = true) String userName) {
         int i = userService.deleteUserByUserName(userName);
@@ -79,6 +89,7 @@ public class UserController {
 
     @PostMapping("/register")
     public Result<Object> register(@RequestBody User user) {
+        System.out.println(user);
         User register = userService.register(user);
         // 返回register
         if (register == null)

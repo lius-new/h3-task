@@ -39,4 +39,7 @@ public interface UserMapper {
     @Select("select * from user where user_name=#{userName} and id=#{id} and user_role=#{userRole} and user_status!=1")
     List<User> checkUser(User user);
 
+
+    @Update("update user set user_role='VIP',balance=balance-50 where user_name = #{userName}")
+    int updateVip(String userName);
 }
