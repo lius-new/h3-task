@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+<!--    SimplificationModelVideoBuilder-->
+<!--    FullModelVideoBuilder-->
+    <videomodel.build.class>chapter7.SimplificationModelVideoBuilder</videomodel.build.class>
+
+</config>
