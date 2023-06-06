@@ -37,6 +37,7 @@
       <div>
         <span>用户权限</span>
         <n-select
+          :disabled="roleDisable"
           type="text"
           :value="userAccountInfo.userRole"
           @update:value="(value) => (userAccountInfo.userRole = value)"
@@ -69,6 +70,7 @@ import { getUserByName, changeUserInfo } from "@/serve/api";
 import Layout from "@/components/layout/index.vue";
 import { optionUserRole } from "@/mock/common";
 import { useRouter } from "vue-router";
+import { computed } from "vue";
 
 const router = useRouter();
 
@@ -81,6 +83,10 @@ const userAccountInfo = reactive({
   userRole: ref(""),
   userStatus: ref<"0" | "1">(),
   balance: ref<any>(),
+});
+const roleDisable = computed(() => {
+  let userRole = localStorage.getItem("userRole");
+  return !(userRole === "ADMIN");
 });
 
 onBeforeMount(async () => {
