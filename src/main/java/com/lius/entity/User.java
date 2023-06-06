@@ -7,12 +7,12 @@ public class User {
     private String userEmail;
     private String userRole;
     private Integer userStatus;
-    private Integer  balance;
+    private Double balance;
 
     public User() {
     }
 
-    public User(Integer id, String userName,String userRole) {
+    public User(Integer id, String userName, String userRole) {
         this.id = id;
         this.userName = userName;
         this.userRole = userRole;
@@ -67,12 +67,11 @@ public class User {
         this.userStatus = userStatus;
     }
 
-
-    public Integer getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(Integer balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 

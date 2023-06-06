@@ -9,7 +9,7 @@ public interface UserService {
 
     int updateUser(User user);
 
-    int  deleteUserByUserName(String userName);
+    int deleteUserByUserName(String userName);
 
     List<User> selectAllUser();
 
@@ -17,7 +17,7 @@ public interface UserService {
 
     User selectIdByUserName(String username);
 
-    List<User>  selectUserByUserNameLike(String username);
+    List<User> selectUserByUserNameLike(String username);
 
     User login(User user);
 
@@ -27,5 +27,5 @@ public interface UserService {
 
     int changeUserRole(User user);
 
-    int updateVip(String userName);
+    int toVip(User user);
 }

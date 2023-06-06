@@ -22,20 +22,29 @@ public class UserController {
     @PostMapping()
     public Result<Object> insertUser(@RequestBody User user) {
         int i = userService.insertUser(user);
-        if (i > 0){
-            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+        if (i > 0) {
+            return new Result<>(true, ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
         }
-        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
+        return new Result<>(false, ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
 
+    }
+
+    @PutMapping("/to-vip")
+    public Result<Object> toVip(@RequestBody User user) {
+        int i = userService.toVip(user);
+        if (i > 0) {
+            return new Result<>(true, ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+        }
+        return new Result<>(false, ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
     }
 
     @PutMapping()
     public Result<Object> updateUser(@RequestBody User user) {
         int i = userService.updateUser(user);
-        if (i > 0){
-            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+        if (i > 0) {
+            return new Result<>(true, ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
         }
-        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
+        return new Result<>(false, ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
     }
 
     @PutMapping("/{userName}")
@@ -51,10 +60,10 @@ public class UserController {
     @DeleteMapping("/{userName}")
     public Result<Object> deleteUser(@PathVariable(value = "userName", required = true) String userName) {
         int i = userService.deleteUserByUserName(userName);
-        if (i > 0){
-            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+        if (i > 0) {
+            return new Result<>(true, ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
         }
-        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
+        return new Result<>(false, ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
     }
 
     @GetMapping()
@@ -86,6 +95,7 @@ public class UserController {
         resultMap.put("role", u.getUserRole());
         return new Result<Object>(true, ResultCode.LOGIN_SUCCESS.getCode(), ResultCode.LOGIN_SUCCESS.getMsg(), resultMap);
     }
+
 
     @PostMapping("/register")
     public Result<Object> register(@RequestBody User user) {
