@@ -1,5 +1,5 @@
-import { VNode } from "vue";
-import { renderIcon } from "@/utils";
+import { VNode, Component, h } from "vue";
+import { NIcon } from "naive-ui";
 
 import {
   AccessibilityOutline,
@@ -7,6 +7,9 @@ import {
   ArrowUp,
   HandRightOutline,
   LogInOutline,
+  HomeOutline,
+  CartSharp,
+  Diamond,
 } from "@vicons/ionicons5";
 
 interface MenuItemInterface {
@@ -16,7 +19,18 @@ interface MenuItemInterface {
   [key: string]: any;
 }
 
+interface renderIconFunc {
+  (icon: Component): () => VNode<{ [key: string]: any }>;
+}
+const renderIcon: renderIconFunc = (icon: Component) => {
+  return () => h(NIcon, null, { default: () => h(icon) });
+};
 const menuOptions: MenuItemInterface[] = [
+  {
+    label: "首页",
+    key: "backend-home",
+    icon: renderIcon(HomeOutline),
+  },
   {
     label: "用户管理",
     key: "user-manager",
@@ -41,6 +55,16 @@ const userOptions: MenuItemInterface[] = [
     key: "cancellation",
     icon: renderIcon(LogInOutline),
   },
+  {
+    label: "租车",
+    key: "rent-car-home",
+    icon: renderIcon(CartSharp),
+  },
 ];
+const toVipOptions: MenuItemInterface = {
+  label: "升级VIP",
+  key: "to-vip",
+  icon: renderIcon(Diamond),
+};
 
-export default { menuOptions, userOptions };
+export default { menuOptions, userOptions, toVipOptions };

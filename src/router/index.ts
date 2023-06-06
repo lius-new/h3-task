@@ -2,7 +2,8 @@ import { VNode } from "vue";
 import {
   Home,
   Login,
-  CarManger,
+  BackHome,
+  CarManager,
   UserManager,
   UserAccount,
   CarPublish,
@@ -23,6 +24,14 @@ const routes: Array<routesItemInterface> = [
     component: Home,
     name: "root",
     meta: {
+      isNeedLogin: false, //是否需要登录
+    },
+  },
+  {
+    path: "/backend-home",
+    component: BackHome,
+    name: "backend-home",
+    meta: {
       isNeedLogin: true, //是否需要登录
     },
   },
@@ -36,7 +45,7 @@ const routes: Array<routesItemInterface> = [
   },
   {
     path: "/car-manager",
-    component: CarManger,
+    component: CarManager,
     name: "car-manager",
     meta: {
       isNeedLogin: true, //是否需要登录

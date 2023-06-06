@@ -59,6 +59,14 @@
           :options="optionUserStatus"
         />
       </div>
+      <div>
+        <span>用户余额</span>
+        <n-input-number
+          :status="(modelProps.type as any)"
+          :value="userInfo.balance"
+          @update:value="(value:any) => userInfo.balance = value"
+        />
+      </div>
     </div>
     <div v-else-if="store.modalStore.type === 'add'" class="add-modal-wrapper">
       <div>
@@ -111,10 +119,11 @@
 </template>
 <script setup lang="ts">
 import { useTableOperateModel } from "@/stores/index";
-import { useMessage, NModal, NInput, NSelect } from "naive-ui";
+import { useMessage, NModal, NInput, NSelect, NInputNumber } from "naive-ui";
 import { optionUserRole, optionUserStatus } from "@/mock/common";
 import { renderIcon } from "@/utils";
 import { computed, reactive, ref } from "vue";
+import { deleteUser, addUser, changeUserInfo } from "@/serve/api";
 import {
   CloudUploadOutline,
   TrashBinOutline,
@@ -131,6 +140,7 @@ const userInfo = reactive({
   userEmail: ref(store.modalStore.data.userEmail),
   userRole: ref(store.modalStore.data.userRole),
   userStatus: ref(store.modalStore.data.userStatus),
+  balance: ref(store.modalStore.data.balance),
 });
 
 const modelProps = computed(() => {
@@ -151,11 +161,15 @@ const deleteProps = {
   type: "error",
   positiveText: "确认",
   negativeText: "取消",
-  modelButtonOKClick: () => {
-    message.success("Submit");
+  modelButtonOKClick: async () => {
+    // 删除用户
+    let resp = await deleteUser(userInfo.userName);
+
+    if (resp.data && resp.data.code === 1102) message.success("删除成功");
+    else message.warning("删除失败");
   },
   modelButtonCancelClick: () => {
-    message.success("Cancel");
+    message.success("取消操作");
   },
 };
 const editProps = {
@@ -165,9 +179,12 @@ const editProps = {
   type: "warning",
   positiveText: "提交",
   negativeText: "取消",
-  modelButtonOKClick: () => {
+  modelButtonOKClick: async () => {
     console.log(userInfo);
-    message.success("Submit");
+
+    const resp = await changeUserInfo(userInfo);
+    if (resp.data && resp.data.code === 1102) message.success("修改成功");
+    else message.warning("修改失败");
   },
   modelButtonCancelClick: () => {
     message.success("Cancel");
@@ -180,12 +197,13 @@ const addProps = {
   type: "success",
   positiveText: "提交",
   negativeText: "取消",
-  modelButtonOKClick: () => {
-    console.log(store.modalStore.data);
-    message.success("Submit");
+  modelButtonOKClick: async () => {
+    const resp = await addUser(userInfo);
+    if (resp.data && resp.data.code === 1102) message.success("添加成功");
+    else message.warning("添加失败");
   },
   modelButtonCancelClick: () => {
-    message.success("Cancel");
+    message.success("取消操作");
   },
 };
 </script>

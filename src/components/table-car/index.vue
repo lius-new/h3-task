@@ -9,8 +9,9 @@
   <TableModel v-if="storeTableModal.modalStore.open" />
 </template>
 <script setup lang="ts">
+import { cloneDeep } from "lodash";
 import { NDataTable, NButton, NButtonGroup } from "naive-ui";
-import { ref, h } from "vue";
+import { ref, h, onBeforeMount } from "vue";
 import TableModel from "@/components/table-car-modal/index.vue";
 import { uesDataTableStore, useTableOperateModel } from "@/stores/index";
 import { encapsulatedDataCol, encapsulatedCarData, mapCarKey } from "@/utils";
@@ -38,9 +39,7 @@ storeDataTable.$subscribe((_, state) => {
     data.value = state.data;
   }
 });
-
-// 加载数据
-const loadData = async () => {
+onBeforeMount(async () => {
   // 获取数据
   const resp = await props.func();
 
@@ -49,9 +48,9 @@ const loadData = async () => {
     resp?.data?.code === 1102 &&
     resp.data.data.length !== 0
   ) {
-    storeDataTable.loadData(JSON.parse(JSON.stringify(resp.data.data))); // 将数据同步到store,保存备份
+    storeDataTable.loadData(cloneDeep(resp.data.data)); // 将数据同步到store,保存备份
     data.value = encapsulatedCarData(await resp.data.data);
-    columns.value = encapsulatedDataCol(mapCarKey, resp.data.data[0]);
+    columns.value = encapsulatedDataCol(mapCarKey, data.value[0]);
 
     // 添加操作按钮
     columns.value.push({
@@ -72,13 +71,11 @@ const loadData = async () => {
                 ghost: true,
                 type: "warning",
                 onClick: () => {
-                  const current = storeDataTable.data.filter(
-                    (item: any) =>
-                      item.id === row.id && item.userName === row.userName
-                  )[0];
-                  storeTableModal.openEditModal(
-                    JSON.parse(JSON.stringify(current))
-                  );
+                  const current = storeDataTable.data.filter((item: any) => {
+                    return item.id === row.id;
+                  })[0];
+
+                  storeTableModal.openEditModal(cloneDeep(current));
                 },
               },
               { default: () => "编辑" }
@@ -90,7 +87,11 @@ const loadData = async () => {
                 ghost: true,
                 type: "error",
                 onClick: () => {
-                  storeTableModal.openDeleteModal(row);
+                  const current = storeDataTable.data.filter((item: any) => {
+                    return item.id === row.id;
+                  })[0];
+
+                  storeTableModal.openDeleteModal(cloneDeep(current));
                 },
               },
               { default: () => "删除" }
@@ -100,6 +101,5 @@ const loadData = async () => {
       },
     });
   }
-};
-loadData();
+});
 </script>

@@ -11,7 +11,11 @@
       </div>
       <div>
         <span>密码</span>
-        <n-input type="password" :value="userAccountInfo.userPassword" />
+        <n-input
+          type="password"
+          :value="userAccountInfo.userPassword"
+          @input="(value:string)=>userAccountInfo.userPassword = value"
+        />
       </div>
       <div>
         <span>邮箱</span>
@@ -22,7 +26,16 @@
         />
       </div>
       <div>
-        <span>用户权限(需等待审批)</span>
+        <span>金额</span>
+        <n-input
+          disabled
+          type="text"
+          :value="userAccountInfo.balance"
+          @input="(value:string)=>userAccountInfo.balance = value"
+        />
+      </div>
+      <div>
+        <span>用户权限</span>
         <n-select
           type="text"
           :value="userAccountInfo.userRole"
@@ -40,38 +53,68 @@
         />
       </div>
       <div>
-        <n-button type="primary" strong secondary>修改</n-button>
+        <n-button @click="clickHandle" type="primary" strong secondary
+          >修改</n-button
+        >
       </div>
     </div>
   </Layout>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { NInput, NButton, NSelect } from "naive-ui";
+import { ref, reactive, onBeforeMount } from "vue";
+import { NInput, NButton, NSelect, useMessage } from "naive-ui";
 import { optionUserStatus } from "@/mock/common";
-import { getUserByName } from "@/serve/api";
+import { getUserByName, changeUserInfo } from "@/serve/api";
 import Layout from "@/components/layout/index.vue";
 import { optionUserRole } from "@/mock/common";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
+
+const message = useMessage();
 const userAccountInfo = reactive({
+  id: ref(""),
   userName: ref(""),
   userPassword: ref(""),
   userEmail: ref(""),
   userRole: ref(""),
   userStatus: ref<"0" | "1">(),
+  balance: ref<any>(),
 });
 
-(async () => {
+onBeforeMount(async () => {
   let resp = await getUserByName(localStorage.getItem("userName") as string);
-  const { userName, userPassword, userEmail, userRole, userStatus } = await resp
-    .data.data;
+
+  const {
+    id,
+    userName,
+    userPassword,
+    userEmail,
+    userRole,
+    userStatus,
+    balance,
+  } = await resp.data.data;
+  userAccountInfo.id = id;
   userAccountInfo.userName = userName;
   userAccountInfo.userPassword = userPassword;
   userAccountInfo.userEmail = userEmail;
   userAccountInfo.userRole = userRole;
   userAccountInfo.userStatus = userStatus;
-})();
+  userAccountInfo.balance = balance;
+});
+
+const clickHandle = async () => {
+  // 获取用户id
+  const resp = await changeUserInfo(userAccountInfo);
+  if (resp.data && resp.data.code == 1102) {
+    message.success("修改成功,即将跳转到登录界面", { duration: 1200 });
+    setTimeout(() => {
+      localStorage.clear();
+      router.push("/login");
+    }, 1200);
+  } else message.warning("修改失败");
+};
 </script>
 
 <style scoped>

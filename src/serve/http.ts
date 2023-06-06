@@ -45,7 +45,7 @@ axios.interceptors.response.use(
     }
   },
   (error) => {
-    if (error.response.status) {
+    if (error.response && error.response.status) {
       return Promise.reject(error.response);
     }
   }
@@ -63,10 +63,22 @@ export async function httpGet({
   url,
   params = {},
 }: httpRequestOptionInterface) {
-  return await axios.get(url, params);
+  return await axios.get(url, { params: params });
 }
 
 // post 请求
 export async function httpPost({ url, data = {} }: httpRequestOptionInterface) {
   return await axios.post(url, data);
+}
+// put 请求
+export async function httpPut({ url, data = {} }: httpRequestOptionInterface) {
+  return await axios.put(url, data);
+}
+
+// delete
+export async function httpDelete({
+  url,
+  params = {},
+}: httpRequestOptionInterface) {
+  return await axios.delete(url, { params: params });
 }

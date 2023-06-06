@@ -9,8 +9,9 @@
   <TableModal v-if="storeTableModal.modalStore.open" />
 </template>
 <script setup lang="ts">
+import { cloneDeep } from "lodash";
 import { NDataTable, NButton, NButtonGroup } from "naive-ui";
-import { ref, h } from "vue";
+import { ref, h, onBeforeMount } from "vue";
 import TableModal from "@/components/table-user-modal/index.vue";
 import { uesDataTableStore, useTableOperateModel } from "@/stores/index";
 import { mapUserKey, encapsulatedDataCol, encapsulatedUserData } from "@/utils";
@@ -49,13 +50,13 @@ const loadData = async () => {
     resp?.data?.code === 1102 &&
     resp.data.data.length !== 0
   ) {
-    storeDataTable.loadData(JSON.parse(JSON.stringify(resp.data.data))); // 将数据同步到store,保存备份
+    storeDataTable.loadData(cloneDeep(resp.data.data)); // 将数据同步到store,保存备份
     data.value = encapsulatedUserData(await resp.data.data);
-    columns.value = encapsulatedDataCol(mapUserKey, resp.data.data[0]);
+    columns.value = encapsulatedDataCol(mapUserKey, data.value[0]);
 
     // 添加操作按钮
     columns.value.push({
-      title: "action",
+      title: "操作",
       key: "action",
       render(row: any) {
         return h(
@@ -76,9 +77,7 @@ const loadData = async () => {
                     (item: any) =>
                       item.id === row.id && item.userName === row.userName
                   )[0];
-                  storeTableModal.openEditModal(
-                    JSON.parse(JSON.stringify(current))
-                  );
+                  storeTableModal.openEditModal(cloneDeep(current));
                 },
               },
               { default: () => "编辑" }
@@ -101,5 +100,6 @@ const loadData = async () => {
     });
   }
 };
-loadData();
+
+onBeforeMount(() => loadData());
 </script>

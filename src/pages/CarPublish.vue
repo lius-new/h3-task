@@ -12,32 +12,50 @@
       </div>
       <div>
         <span>车辆名称</span>
-        <n-input type="text" :value="carPublishInfo.carName" />
+        <n-input
+          type="text"
+          :value="carPublishInfo.carName"
+          @input="(value:any) => carPublishInfo.carName =value"
+        />
       </div>
       <div>
         <span>车辆描述</span>
-        <n-input type="text" :value="carPublishInfo.carDesc" />
+        <n-input
+          type="text"
+          :value="carPublishInfo.carDesc"
+          @input="(value:any) => carPublishInfo.carDesc =value"
+        />
       </div>
       <div>
         <span>车辆详情</span>
-        <n-input type="text" :value="carPublishInfo.carContent" />
+        <n-input
+          type="text"
+          :value="carPublishInfo.carContent"
+          @input="(value:any) => carPublishInfo.carContent =value"
+        />
       </div>
       <div>
-        <n-button @click="submitCarInfoHandle" type="info">上传</n-button>
+        <n-button
+          @click="submitCarInfoHandle"
+          type="info"
+          :disabled="!(carPublishInfo.userName && carPublishInfo.carName)"
+          >上传</n-button
+        >
       </div>
     </div>
   </Layout>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
-import { NInput, NButton, NSelect } from "naive-ui";
-import { getAllUser } from "@/serve/api";
+import { ref, reactive, onBeforeMount } from "vue";
+import { NInput, NButton, NSelect, useMessage } from "naive-ui";
+import { getAllUser, addCar } from "@/serve/api";
 import Layout from "@/components/layout/index.vue";
 
+const message = useMessage();
 const userNameList = ref();
 
-(async () => {
+onBeforeMount(async () => {
   let resp = await getAllUser();
 
   if (
@@ -50,19 +68,26 @@ const userNameList = ref();
       value: item.userName,
     }));
   }
-})();
+});
 
 const carPublishInfo = reactive({
   userName: ref(""),
   carName: ref(),
   carDesc: ref(),
   carContent: ref(),
-  carStatus: 0,
+  carStatus: 2,
   rentId: null,
 });
 
-const submitCarInfoHandle = () => {
-  console.log(carPublishInfo);
+const submitCarInfoHandle = async () => {
+  const resp = await addCar({
+    ...carPublishInfo,
+    user: {
+      userName: carPublishInfo.userName,
+    },
+  });
+  if (resp.data && resp.data.code == 1102) message.success("添加成功,待审核中");
+  else message.warning("添加成功,待审核中");
 };
 </script>
 

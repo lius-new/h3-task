@@ -18,6 +18,7 @@
           </n-form-item-row>
           <n-form-item-row label="密码">
             <n-input
+              type="password"
               placeholder="password"
               :on-change="(value:string) => {onChangeInputHandle(value,'password')}"
             />
@@ -37,12 +38,14 @@
           </n-form-item-row>
           <n-form-item-row label="密码">
             <n-input
+              type="password"
               placeholder="password"
               :on-change="(value:string) => {onChangeInputHandle(value,'password')}"
             />
           </n-form-item-row>
           <n-form-item-row label="重复密码">
             <n-input
+              type="password"
               placeholder="password"
               :on-change="(value:string) => {onChangeInputHandle(value,'password_')}"
             />
@@ -101,15 +104,14 @@ const onSubmitHandle = () => {
       userName: userInfo.userName,
       userPassword: userInfo.userPassword,
     }).then(({ data }) => {
-      if (data.code !== 1001) {
-        msgProvider.warning(data.msg);
-      } else {
+      if (data.code === 1001) {
         msgProvider.success(data.msg);
-        data.data &&
-          data.data.token &&
-          localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", data.data.token);
         localStorage.setItem("userName", userInfo.userName);
+        localStorage.setItem("userRole", data.data.role);
         router.push("/");
+      } else {
+        msgProvider.warning(data.msg);
       }
     });
   } else {
@@ -117,16 +119,15 @@ const onSubmitHandle = () => {
       userName: userInfo.userName,
       userPassword: userInfo.userPassword,
     }).then(({ data }) => {
-      if (data.code !== 1003) {
-        if (data.code === 1101) msgProvider.warning(`用户名已存在`);
-        else msgProvider.warning(data.msg);
-      } else {
+      if (data.code === 1003) {
         msgProvider.success(data.msg);
-        data.data &&
-          data.data.token &&
-          localStorage.setItem("token", data.data.token);
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userRole", data.data.role);
         localStorage.setItem("userName", userInfo.userName);
         router.push("/");
+      } else {
+        if (data.code === 1101) msgProvider.warning(`用户名已存在`);
+        else msgProvider.warning(data.msg);
       }
     });
   }

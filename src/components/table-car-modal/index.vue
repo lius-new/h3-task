@@ -33,24 +33,41 @@
         />
       </div>
       <div>
-        <span>启用/禁止车辆</span>
-        <n-select
+        <span>车辆概述 </span>
+        <n-input
           :status="(modalProps?.type as any)"
-          :value="carInfo.carStatus == '0' ? '启用' : '禁用'"
-          @update:value="(value) => (carInfo.carStatus = value)"
-          :options="optionUserStatus"
+          type="text"
+          :value="carInfo.carDesc"
+          @input="(v:string)=> carInfo.carDesc = v"
         />
       </div>
+      <div>
+        <span>[启用/禁止/审核]车辆:{{ carInfo.rentId }}</span>
+        <n-select
+          :status="(modalProps?.type as any)"
+          :value="
+            carInfo.carStatus == '0'
+              ? '启用'
+              : carInfo.carStatus == '1'
+              ? '禁用'
+              : '审核不通过'
+          "
+          :disabled="!(userRole == 'ADMIN')"
+          @update:value="(value) => (carInfo.carStatus = value)"
+          :options="optionCarStatus"
+        />
+      </div>
+
       <div v-if="carInfo.carStatus == '0'">
         <span>选择租借的用户</span>
         <n-select
           :status="(modalProps?.type as any)"
-          :value="carInfo.rentId"
-          @update:value="(value) => (carInfo.rentId = value)"
+          :value="carInfo.rentUserId"
+          @update:value="(value) => (carInfo.rentUserId = value)"
           :options="rentUserIdList"
         />
       </div>
-      <template v-if="carInfo.rentId && carInfo.carStatus == '0'">
+      <template v-if="carInfo.rentUserId && carInfo.carStatus == '0'">
         <div>
           <span>开始租借时间</span>
           <n-date-picker
@@ -77,25 +94,38 @@
 <script setup lang="ts">
 import { useTableOperateModel } from "@/stores/index";
 import { useMessage, NModal, NInput, NSelect, NDatePicker } from "naive-ui";
-import { optionUserStatus } from "@/mock/common";
-import { computed, ref, reactive } from "vue";
+import { optionCarStatus } from "@/mock/common";
+import { computed, ref, reactive, onBeforeMount } from "vue";
 import { CloudUploadOutline, TrashBinOutline } from "@vicons/ionicons5";
 import { renderIcon, getDataTime } from "@/utils";
-import { getAllUser } from "@/serve/api";
+import { getAllUser, deleteCar, changeCar } from "@/serve/api";
 
 const store = useTableOperateModel();
 const message = useMessage();
+const userRole: "ADMIN" | "USER" | "VIP" | any =
+  localStorage.getItem("userRole");
 
 const rentUserIdList = ref<any>([]);
 
 const carInfo = reactive({
   id: store.modalStore.data.id,
-  userName: store.modalStore.data.userName,
+  userName: store.modalStore.data.user && store.modalStore.data.user.userName,
   carName: ref(store.modalStore.data.carName),
+  carDesc: ref(store.modalStore.data.carDesc),
   carStatus: ref<"0" | "1">(store.modalStore.data.carStatus),
-  rentId: ref(store.modalStore.data.rentId),
-  startTime: ref(getDataTime()),
-  endTime: ref(getDataTime()),
+  rentId: ref(store.modalStore.data.rentId), // rent 数据id
+  rentUserId:
+    store.modalStore.data.rent && ref(store.modalStore.data.rent.rentUserId), // rent 数据中rent_user_id字段
+  startTime: ref(
+    (store.modalStore.data.rent &&
+      getDataTime(store.modalStore.data.rent.rentStartDate)) ||
+      getDataTime()
+  ),
+  endTime: ref(
+    (store.modalStore.data.rent &&
+      getDataTime(store.modalStore.data.rent.rentEndDate)) ||
+      getDataTime(new Date().getTime() + 86400000)
+  ),
 });
 
 const modalProps = computed(() => {
@@ -115,14 +145,16 @@ const loadData = async () => {
     resp?.data?.code === 1102 &&
     resp.data.data.length !== 0
   ) {
+    // 所有用户的id
     rentUserIdList.value = resp.data.data.map((item: any) => ({
       label: `${item.id}-${item.userName}`,
       value: item.id,
     }));
+
     rentUserIdList.value.unshift({ label: "取消选择", value: null });
   }
 };
-loadData();
+onBeforeMount(() => loadData());
 
 const deleteProps = {
   icon: TrashBinOutline,
@@ -131,11 +163,17 @@ const deleteProps = {
   type: "error",
   positiveText: "确认",
   negativeText: "取消",
-  modelButtonOKClick: () => {
-    message.success("Submit");
+  modelButtonOKClick: async () => {
+    const resp = await deleteCar({
+      userName: carInfo.userName,
+      cId: carInfo.id,
+    });
+
+    if (resp.data && resp.data.code === 1102) message.success("删除成功");
+    else message.warning("删除失败" + resp.data.msg);
   },
   modelButtonCancelClick: () => {
-    message.success("Cancel");
+    message.success("取消操作");
   },
 };
 const editProps = {
@@ -145,12 +183,22 @@ const editProps = {
   type: "warning",
   positiveText: "提交",
   negativeText: "取消",
-  modelButtonOKClick: () => {
-    console.log(carInfo); // 为什么会重新渲染整个表格呢
-    message.success("Submit");
+  modelButtonOKClick: async () => {
+    const resp = await changeCar({
+      ...carInfo,
+      rent: {
+        rentCarId: carInfo.id,
+        rentUserId: carInfo.rentUserId,
+        rentStartDate: new Date(carInfo.startTime),
+        rentEndDate: new Date(carInfo.endTime),
+      },
+    });
+
+    if (resp.data && resp.data.code === 1102) message.success("编辑成功");
+    else message.warning("编辑失败: " + resp.data.msg);
   },
   modelButtonCancelClick: () => {
-    message.success("Cancel");
+    message.success("取消操作");
   },
 };
 </script>
