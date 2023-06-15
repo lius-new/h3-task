@@ -99,6 +99,9 @@ const userMenuHandleClick = (key: string) => {
     toVip({ userName }).then((res: any) => {
       if (res.data.code && res?.data?.code === 1102) {
         (window as any).$message.success("升级成功");
+        setTimeout(() => {
+          (window as any).location.reload();
+        }, 500);
       } else {
         (window as any).$message.warning("升级失败");
       }
