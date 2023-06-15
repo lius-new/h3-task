@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -47,14 +46,15 @@ public class UserController {
         return new Result<>(false, ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
     }
 
-    @PutMapping("/{userName}")
-    public Result<Object> updateUser(@PathVariable(value="userName") String  userName) {
-        int i =  userService.updateVip(userName);
-        if (i > 0){
-            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
-        }
-        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
-    }
+//    @PutMapping("/{userName}")
+//    public Result<Object> updateUser(@PathVariable(value="userName") String  userName) {
+//        int i1 = userService.toVip(userName);
+//        int i =  userService.updateVip(userName);
+//        if (i > 0){
+//            return new Result<>(true,ResultCode.DATABASE_OPERATE_SUCCESS.getCode(), ResultCode.DATABASE_OPERATE_SUCCESS.getMsg());
+//        }
+//        return new Result<>(false,ResultCode.DATABASE_OPERATE_FAIL.getCode(), ResultCode.DATABASE_OPERATE_FAIL.getMsg());
+//    }
 
 
     @DeleteMapping("/{userName}")

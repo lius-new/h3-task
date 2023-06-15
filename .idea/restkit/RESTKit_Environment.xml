@@ -6,10 +6,10 @@
         <BKV>
           <option name="enabled" value="true" />
           <option name="key" value="Authorization" />
-          <option name="value" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0Iiwic3ViIjoiYWRtaW4iLCJpYXQiOjE2ODYwMjg4MTAsImV4cCI6MTY4NjExNTIxMCwicm9sZSI6IkFETUlOIn0.i59nXrMyPksDB9X83PpSwKZz2yDkPYof3pthY3WDZZ8" />
+          <option name="value" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0Iiwic3ViIjoiYWRtaW4iLCJpYXQiOjE2ODY0NzM5NTUsImV4cCI6MTY4NjU2MDM1NSwicm9sZSI6IkFETUlOIn0.u0TdPuabSOJAvxvQrCNp8n9i02zLwEcy4fzVEEJmOKM" />
         </BKV>
       </list>
     </option>
-    <option name="project" value="javaee-project-combat" />
+    <option name="project" value="h3-javaee-learn" />
   </component>
 </project>
